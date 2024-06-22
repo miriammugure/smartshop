@@ -58,12 +58,10 @@ router.post("/", async (req, res) => {
       .status(400)
       .json({ success: false, message: "Product title field is required" });
   if (!productdescription)
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Product description field is required",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Product description field is required",
+    });
   if (!productcost)
     return res
       .status(400)
@@ -88,8 +86,52 @@ router.post("/", async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
-router.patch("/", (req, res) => {
-  res.send("update user");
+router.patch("/:id", async (req, res) => {
+  const {
+    productthumbnail,
+    producttitle,
+    productdescription,
+    productcost,
+    onoffer,
+  } = req.body;
+  const id = req.params.id;
+
+  try {
+    let updateProduct;
+    if (productthumbnail) {
+      updateProduct = await pool.query(
+        "UPDATE Products SET productthumbnail=$1 WHERE id=$2",
+        [productthumbnail, id],
+      );
+    }
+    if (producttitle) {
+      updateProduct = await pool.query(
+        "UPDATE Products SET producttitle=$1 WHERE id=$2",
+        [producttitle, id],
+      );
+    }
+    if (productdescription) {
+      updateProduct = await pool.query(
+        "UPDATE Products SET productdescription=$1 WHERE id=$2",
+        [productdescription, id],
+      );
+    }
+    if (productcost) {
+      updateProduct = await pool.query(
+        "UPDATE Products SET productcost=$1 WHERE id=$2",
+        [productcost, id],
+      );
+    }
+    if (onoffer) {
+      updateProduct = await pool.query(
+        "UPDATE Products SET onoffer=$1 WHERE id=$2",
+        [onoffer, id],
+      );
+    }
+    res.json(updateProduct);
+  } catch (error) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 export default router;
