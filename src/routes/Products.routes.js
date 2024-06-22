@@ -43,5 +43,53 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+router.post("/", async (req, res) => {
+  const productthumbnail = req.body.productthumbnail;
+  const producttitle = req.body.producttitle;
+  const productdescription = req.body.productdescription;
+  const productcost = req.body.productcost;
+  const onoffer = req.body.onoffer;
+  if (!productthumbnail)
+    return res
+      .status(400)
+      .json({ success: false, message: "Product thumbnail field is required" });
+  if (!producttitle)
+    return res
+      .status(400)
+      .json({ success: false, message: "Product title field is required" });
+  if (!productdescription)
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Product description field is required",
+      });
+  if (!productcost)
+    return res
+      .status(400)
+      .json({ success: false, message: "Product cost field is required" });
+  if (!onoffer)
+    return res
+      .status(400)
+      .json({ success: false, message: "Onoffer field is required" });
+  try {
+    const result = await pool.query(
+      "INSERT INTO products (productThumbnail, productTitle, productDescription, productCost, onOffer) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        productthumbnail,
+        producttitle,
+        productdescription,
+        productcost,
+        onoffer,
+      ],
+    );
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+router.patch("/", (req, res) => {
+  res.send("update user");
+});
 
 export default router;
