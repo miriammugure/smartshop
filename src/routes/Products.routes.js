@@ -128,6 +128,7 @@ router.patch("/:id", async (req, res) => {
         [onoffer, id],
       );
     }
+
     res.json(updateProduct);
   } catch (error) {
     res.status(500).json({ success: false, message: err.message });
